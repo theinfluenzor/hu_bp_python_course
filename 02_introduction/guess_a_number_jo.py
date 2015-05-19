@@ -2,7 +2,7 @@ from random import randint
 
 
 tries = 7
-idiottry = 3
+idiottry = 2
 count = 0
 rnd_nr = randint(1, 100)
 
@@ -22,20 +22,19 @@ while tries > 0 and idiottry > 0:
 
     if guessed_nr == rnd_nr:
         print "You're a hero !! " + str(guessed_nr) + ' was right. You only needed ' + str(count) + ' tries.'
-        try:
-            ask = str(raw_input('Do you want to play again ? Enter: Yes '))
-            if ask == 'Yes':
-                tries = 7
-                idiottry = 3
-                count = 0
-                rnd_nr = randint(1, 100)
-                continue
-        except:
+        ask = raw_input('Do you want to play again ? Enter: Yes ')
+        if ask == 'Yes':
+            tries = 7
+            idiottry = 2
+            count = 0
+            rnd_nr = randint(1, 100)
+            continue
+        else:
             print 'I interpret that as a No.'
             break
         break
     elif guessed_nr > rnd_nr:
-        print 'That was too euphoric ;)'
+        print 'That was too euphoric ;) Your number is too high.'
     elif guessed_nr < rnd_nr:
         print 'Not enough.'
 
