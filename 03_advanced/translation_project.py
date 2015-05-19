@@ -15,9 +15,36 @@ class BioMolecule(object):
         self.name = name
         self.mass = mass
 
+	def __repr__(self):
+		return '_id = '+str(id)+'\nname = '+str(name)+'\nmass = '+str(mass)
+	def __str__(self):
+		return '_id = '+str(id)+'\nname = '+str(name)+'\nmass = '+str(mass)
+
     # 1. Write setter and getter methods for all attributes.
+
+	def __getattribute__(self,name):
+		if name =='_id':
+			return self._id
+		elif name=='name':
+			return self.name
+		elif name=='mass':
+			return self.mass
     #    Use @property decorators as dicussed in the lecture
     # 2. In the setter methods check for the type of each attribute.
+
+	def __setattribute__(self,name,value):
+		if name not in ('_id','name','mass'):
+			raise TypeError('Attribute does not exist')
+		else:
+			if name =='_id' and isinstance(value, int):
+				self.name=value
+			elif name =='name' and isinstance(value, str):
+				self.name=value
+			elif name =='mass' and isinstance(value, float):
+				self.name=value
+			else:
+				raise TypeError('Type of value does not match requirements')
+
 
 class Polymer(BioMolecule):
     """
@@ -35,6 +62,10 @@ class Polymer(BioMolecule):
 
     
     # 4. Write getter and setter for sequence, again check for type
+	#def __getitem__():
+	#	pass
+	#def __setitem__():
+	#	pass
     # 5. run in ipython, instantiate this class, and test it
     def __getitem__(self, value):
         """
@@ -181,9 +212,17 @@ class Cell(object):
             if p:
                 print [len(x) for x in self.proteins]
             
-if __name__ == "__main__":  # the following is called if the module is executed
+if __name__ == "__main__":  
+	test=BioMolecule(1,'test')
+	print test
+	test.name='peter'
+	test.asdf=5
+	print test.asdf
+
+
+	# the following is called if the module is executed
     # 14. Instantiate the Cell class and call the simulation method.
-    pass
+    #pass
 
 # 15. Generate a set of mRNA sequences to initiate the cell.
 # 16. Implement protein degradation.
