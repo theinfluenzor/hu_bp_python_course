@@ -6,8 +6,8 @@ idiottry = 3
 count = 0
 rnd_nr = randint(1, 100)
 
-while tries > 0:
-	tries -= 1
+while tries > 0 and idiottry > 0:
+    tries -= 1
     count += 1
     try:
         guessed_nr = int(raw_input('Please enter an integer between 1 and 99. You have ' + str(tries) +' tries left :'))
@@ -22,11 +22,24 @@ while tries > 0:
 
     if guessed_nr == rnd_nr:
         print "You're a hero !! " + str(guessed_nr) + ' was right. You only needed ' + str(count) + ' tries.'
+        try:
+            ask = str(raw_input('Do you want to play again ? Enter: Yes '))
+            if ask == 'Yes':
+                tries = 7
+                idiottry = 3
+                count = 0
+                rnd_nr = randint(1, 100)
+                continue
+        except:
+            print 'I interpret that as a No.'
+            break
         break
     elif guessed_nr > rnd_nr:
         print 'That was too euphoric ;)'
     elif guessed_nr < rnd_nr:
         print 'Not enough.'
 
+if idiottry <= 0:
+    print "You are too stupid !! You're not allowed to play again."
 
 
