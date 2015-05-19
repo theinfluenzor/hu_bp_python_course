@@ -1,6 +1,6 @@
 # Jorin notes
 ## git introduction
-clone - git clone source folder \
+clone - git clone source folder \n
 add - git add file - creates list with changes \
 commit - git commit -m 'optinal text' \
 push - git push file \
