@@ -14,7 +14,38 @@ class BioMolecule(object):
         self._id = id
         self.name = name
         self.mass = mass
+    
+    @property
+    def _id(self):
+        return self.__id
 
+    @_id.setter
+    def _id(self, identifier):
+        if not isinstance(identifier, int):
+            raise TypeError("id must be Integer.")
+        self.__id = identifier
+    
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, newname):
+        if not isinstance(newname, str):
+            raise TypeError("Name must be a String.")
+        self.__name = newname
+
+    
+    @property
+    def mass(self):
+        return self.__mass
+    
+    @mass.setter
+    def mass(self, value):
+        if not isinstance(value, float):
+            raise TypeError("Mass must be Float.")
+        self.__mass = value
     # 1. Write setter and getter methods for all attributes.
     #    Use @property decorators as dicussed in the lecture
     # 2. In the setter methods check for the type of each attribute.
@@ -30,9 +61,19 @@ class Polymer(BioMolecule):
     @type mass: float
     """
     def __init__(self, id, name, sequence, mass=None):
+        super(Polymer,self).__init__(id, name, mass)
         # 3. Initialize the parent class correctly
-        self._sequence = sequence
+        self.sequence = sequence
 
+    @property
+    def sequence(self):
+        return self.__sequence
+
+    @sequence.setter
+    def sequence(self, seq):
+        if not isinstance(seq, str):
+            raise TypeError("Sequence must be a String.")
+        self.__sequence = seq
     
     # 4. Write getter and setter for sequence, again check for type
     # 5. run in ipython, instantiate this class, and test it
@@ -52,14 +93,17 @@ class Polymer(BioMolecule):
 
 class MRNA(Polymer):
     def __init__(self, id, name, sequence, mass=None):
+        super(MRNA, self).__init__(id, name, sequence, mass)
         # 6. Initialize the parent class correctly
 
         # 7. Create a list that stores if a ribosome is bound for each
         # codon (triplet).
-        self.binding = [] # use this attribute for 7.
+        self.binding = [0 for codon in range(len(self.sequence)/3)] # use this attribute for 7.
 
     def calculate_mass(self):
         NA_mass = {'A': 1.0, 'U': 2.2, 'G':2.1, 'C':1.3}
+        total_mass = sum([NA_mass[na] for na in self.sequence])
+        return total_mass
         # 8. calculate the mass for the whole sequence
 
 class Protein(Polymer):
@@ -82,7 +126,11 @@ class Protein(Polymer):
         super(Protein, self).__init__(id, name, sequence, mass)
         self.__class__.number_of_proteins += 1 #  increase instance counter
         self.mass = self.calculate_mass()
-
+    
+    def __add__(self, protein):
+        if not isinstance(protein, Protein):
+            raise TypeError("Protein can only be elongated with Protein.")
+        return Protein(self.sequence + " " + protein.sequence)
     # 9. implement the elongation feature described in the docstring. (__add__)
 
     def calculate_mass(self):
