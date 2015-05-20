@@ -1,5 +1,6 @@
 import random
 import sys
+import types
 
 class BioMolecule(object):
     """
@@ -10,41 +11,57 @@ class BioMolecule(object):
     @type name: str
     @type mass: float
     """
-    def __init__(self, id, name, mass=None):
+    def __init__(self,id, name, mass=0.):
+        #print 'in init', name
+	#print type(name)
+	#print 'wert'
+	#print id
+	#print type(id)
         self._id = id
         self.name = name
         self.mass = mass
-
-	def __repr__(self):
-		return '_id = '+str(id)+'\nname = '+str(name)+'\nmass = '+str(mass)
-	def __str__(self):
-		return '_id = '+str(id)+'\nname = '+str(name)+'\nmass = '+str(mass)
+        
+    #def __repr__(self):
+    #	return '_id = '+str(self._id)+'\nname = '+str(self.name)+'\nmass = '+str(self.mass)
+    def __str__(self):
+	answer =''
+	#print answer
+	k=vars(self).keys()
+	#print k
+	#print vars(self)
+	for key in k:
+		answer=answer+str(key)+' = '+str(vars(self)[key])+'\n'
+	return answer
 
     # 1. Write setter and getter methods for all attributes.
 
-	def __getattribute__(self,name):
-		if name =='_id':
-			return self._id
-		elif name=='name':
-			return self.name
-		elif name=='mass':
-			return self.mass
+    def __getattr__(self,name):
+	if name in dir(self):
+		return self.__dict__[name]
     #    Use @property decorators as dicussed in the lecture
     # 2. In the setter methods check for the type of each attribute.
 
-	def __setattribute__(self,name,value):
-		if name not in ('_id','name','mass'):
-			raise TypeError('Attribute does not exist')
+    def __setattr__(self,name,value):
+	if str(name) not in ['_id','mass','name']:
+		#print 'in if'
+		raise TypeError('Attribute "'+str(name)+'" does not exist.')
+	else:
+		#print 'in else'
+		#print type(name)
+		#print 'wert'
+		#print value
+		#print type(value)
+		#print'instanz'
+		#print isinstance(value, types.BuiltinFunctionType)
+		#print isinstance(value, )
+		if name=='_id' and isinstance(value, types.BuiltinFunctionType):
+			self.__dict__[name] = value
+		elif name =='name' and isinstance(value, str):
+			self.__dict__[name] = value
+		elif name =='mass' and isinstance(value, float):
+			self.__dict__[name] = value
 		else:
-			if name =='_id' and isinstance(value, int):
-				self.name=value
-			elif name =='name' and isinstance(value, str):
-				self.name=value
-			elif name =='mass' and isinstance(value, float):
-				self.name=value
-			else:
-				raise TypeError('Type of value does not match requirements')
-
+			raise TypeError('Type of value of '+str(name)+' does not match requirements.')
 
 class Polymer(BioMolecule):
     """
@@ -56,42 +73,101 @@ class Polymer(BioMolecule):
     @type sequence: str
     @type mass: float
     """
-    def __init__(self, id, name, sequence, mass=None):
+    def __init__(self, id, name, sequence, mass=0.):
         # 3. Initialize the parent class correctly
+        super(Polymer,self).__init__(id,name,mass)
         self._sequence = sequence
 
     
     # 4. Write getter and setter for sequence, again check for type
-	#def __getitem__():
-	#	pass
-	#def __setitem__():
-	#	pass
+	#def __getitem__(self,value):
+	#	return self.sequence[value]
+	#def __setitem__(self,name,value):
+	#	self.sequence[name] = value
+	#woops existiert ja bereits
+	
     # 5. run in ipython, instantiate this class, and test it
     def __getitem__(self, value):
         """
         Makes the sequence accessible via the indexing operators:
 <        p[10] returns the tenth character in the sequence.
         """
-        return self.sequence[value]
+        return self._sequence[value]
 
     def __setitem__(self, key, value):
         """
          Enables changing of sequence characters via the indexing operators.       
         """
         self.sequence[key] = value
+    def __setattr__(self,name,value):
+	if str(name) not in ['_id','mass','name','_sequence']:
+		raise TypeError('Attribute "'+str(name)+'" does not exist.')
+	else:
+		#print name
+		#print type(name)
+		#print 'wert'
+		#print value
+		#print type(value)
+		#print'instanz'
+		if name=='_id' and isinstance(value, types.BuiltinFunctionType):
+			self.__dict__[name] = value
+		elif name =='name' and isinstance(value, str):
+			self.__dict__[name] = value
+		elif name =='mass' and isinstance(value, float):
+			self.__dict__[name] = value
+		elif name=='_sequence' and isinstance(value, str):
+			self.__dict__[name] = value.upper()
+		else:
+			raise TypeError('Type of value of '+str(name)+'  does not match requirements.')
 
+    def __getattr__(self,name):
+	if name in dir(self):
+		return self.__dict__[name]
 
 class MRNA(Polymer):
-    def __init__(self, id, name, sequence, mass=None):
+    def __init__(self, id, name, sequence, mass=0.):
         # 6. Initialize the parent class correctly
+	super(MRNA,self).__init__(id,name,sequence,mass)
 
         # 7. Create a list that stores if a ribosome is bound for each
         # codon (triplet).
-        self.binding = [] # use this attribute for 7.
-
+        
+        #0 ungebunden, 1 gebunden
+        self.binding = [0]*(len(sequence)/3) # use this attribute for 7.
+        #print self.binding
+	self.calculate_mass()
+	
     def calculate_mass(self):
         NA_mass = {'A': 1.0, 'U': 2.2, 'G':2.1, 'C':1.3}
+        for member in self._sequence:
+		self.mass+= NA_mass[member]
+		#print self.mass
         # 8. calculate the mass for the whole sequence
+    
+    
+    #the usual stuff
+    def __setattr__(self,name,value):
+	if str(name) not in ['_id','mass','name','_sequence','binding']:
+		raise TypeError('Attribute "'+str(name)+'" does not exist.')
+	else:
+		#print name
+		#print type(name)
+		#print 'wert'
+		#print value
+		#print type(value)
+		#print'instanz'
+		if name=='_id' and isinstance(value, types.BuiltinFunctionType):
+			self.__dict__[name] = value
+		elif name =='name' and isinstance(value, str):
+			self.__dict__[name] = value
+		elif name =='mass' and isinstance(value, float):
+			self.__dict__[name] = value
+		elif name=='_sequence' and isinstance(value, str):
+			self.__dict__[name] = value.upper()
+		elif name=='binding' and isinstance(value, list):
+			self.__dict__[name] = value
+		else:
+			raise TypeError('Type of value of '+str(name)+' does not match requirements.')
 
 class Protein(Polymer):
     """Protein with Polymer features and mass calculation. A global class
@@ -105,21 +181,49 @@ class Protein(Polymer):
     MVFTA
 
     
-    
+    Basically just copied that, for it's nothing new and corrected a mistake in the code
     """
     number_of_proteins = 0  # init instance counter
-
-    def __init__(self, id, name, sequence, mass=None):
+    def __init__(self, id, name, sequence, mass=0.):
         super(Protein, self).__init__(id, name, sequence, mass)
-        self.__class__.number_of_proteins += 1 #  increase instance counter
-        self.mass = self.calculate_mass()
+        self.number_of_proteins += 1
+	self.calculate_mass()
 
-    # 9. implement the elongation feature described in the docstring. (__add__)
+    def __add__(self, AS):
+        self._sequence += AS._sequence 
+        self.calculate_mass()
 
     def calculate_mass(self):
-        AA_mass = {'A': 1.0, 'V': 2.9, 'F':3.0}
-        for aa in self.sequence:
+        AA_mass = {"A": 89.0929, "R": 175.208, "N": 132.118, "D": 132.094, "C": 121.158, "Q": 146.144,
+                    "E": 146.121, "G": 75.0664, "H":155.154, "I":131.172, "L": 131.172, "K": 147.195,
+                    "M": 149.211, "F": 165.189, "P": 115.13, "S": 105.092, "T": 119.119, "W": 204.225,
+                    "Y":181.188, "V":117.146}
+        for aa in self._sequence:
             self.mass += AA_mass[aa]
+    
+    #and again the usual stuff
+    def __setattr__(self,name,value):
+	if str(name) not in ['_id','mass','name','_sequence','number_of_proteins']:
+		raise TypeError('Attribute "'+str(name)+'" does not exist.')
+	else:
+		#print name
+		#print type(name)
+		#print 'wert'
+		#print value
+		#print type(value)
+		#print'instanz'
+		if name=='_id' and isinstance(value, types.BuiltinFunctionType):
+			self.__dict__[name] = value
+		elif name =='name' and isinstance(value, str):
+			self.__dict__[name] = value
+		elif name =='mass' and isinstance(value, float):
+			self.__dict__[name] = value
+		elif name=='_sequence' and isinstance(value, str):
+			self.__dict__[name] = value.upper()
+		elif name=='number_of_proteins' and isinstance(value, int):
+			self.__dict__[name] = value
+		else:
+			raise TypeError('Type of value of '+str(name)+'  does not match requirements.')
    
 
 class Ribosome(BioMolecule):
@@ -211,15 +315,22 @@ class Cell(object):
             self.step()
             if p:
                 print [len(x) for x in self.proteins]
-            
+                
+                
 if __name__ == "__main__":  
-	test=BioMolecule(1,'test')
+	test=BioMolecule(id,'test')
 	print test
-	test.name='peter'
-	test.asdf=5
-	print test.asdf
-
-
+	b='UAG'
+	test2=Polymer(id, 'test2',b)
+	print test2
+	test3=MRNA(id,'test3',b)
+	print test3
+	c='ADDFVT'
+	test4=Protein(id,'test4',c)
+	print test4
+	#print 'a'
+	#print dir(test2)
+	#test.name='peter'
 	# the following is called if the module is executed
     # 14. Instantiate the Cell class and call the simulation method.
     #pass
