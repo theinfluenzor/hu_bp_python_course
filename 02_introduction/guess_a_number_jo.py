@@ -3,10 +3,11 @@ from random import randint
 
 tries = 7
 idiottry = 2
-count = 0
+count = -1
 rnd_nr = randint(1, 100)
 
 while tries > 0 and idiottry > 0:
+    won = False
     tries -= 1
     count += 1
     try:
@@ -21,12 +22,15 @@ while tries > 0 and idiottry > 0:
         continue
 
     if guessed_nr == rnd_nr:
+        won = True
         print "You're a hero !! " + str(guessed_nr) + ' was right. You only needed ' + str(count) + ' tries.'
+        if tries <= 0 and won:
+            print 'That was close.'
         ask = raw_input('Do you want to play again ? Enter: Yes ')
         if ask == 'Yes':
             tries = 7
             idiottry = 2
-            count = 0
+            count = -1
             rnd_nr = randint(1, 100)
             continue
         else:
@@ -38,6 +42,9 @@ while tries > 0 and idiottry > 0:
     elif guessed_nr < rnd_nr:
         print 'Not enough.'
 
+
+if tries <= 0 and not won:
+    print 'You lost :('
 if idiottry <= 0:
     print "You are too stupid !! You're not allowed to play again."
 
