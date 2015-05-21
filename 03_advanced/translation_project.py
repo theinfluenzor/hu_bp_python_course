@@ -293,6 +293,29 @@ class Ribosome(BioMolecule):
         """
         # 13. Dissociate the complex.
         return self.nascent_prot
+
+	def __setattr__(self,name,value):
+	if str(name) not in ['_id','mass','name','bound_mrna']:
+		raise TypeError('Attribute "'+str(name)+'" does not exist.')
+	else:
+		#print name
+		#print type(name)
+		#print 'wert'
+		#print value
+		#print type(value)
+		#print'instanz'
+		if name=='_id' and isinstance(value, types.BuiltinFunctionType):
+			self.__dict__[name] = value
+		elif name =='name' and isinstance(value, str):
+			self.__dict__[name] = value
+		elif name =='mass' and isinstance(value, float):
+			self.__dict__[name] = value
+		elif name=='_sequence' and isinstance(value, str):
+			self.__dict__[name] = value.upper()
+		elif name=='number_of_proteins' and isinstance(value, int):
+			self.__dict__[name] = value
+		else:
+			raise TypeError('Type of value of '+str(name)+'  does not match requirements.')
         
 
 class Cell(object):
