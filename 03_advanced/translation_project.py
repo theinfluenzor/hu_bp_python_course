@@ -127,10 +127,8 @@ class Protein(Polymer):
         self.__class__.number_of_proteins += 1 #  increase instance counter
         self.mass = self.calculate_mass()
     
-    def __add__(self, protein):
-        if not isinstance(protein, Protein):
-            raise TypeError("Protein can only be elongated with Protein.")
-        return Protein(self.sequence + " " + protein.sequence)
+    def __add__(self, AS):
+        self.sequence += AS
     # 9. implement the elongation feature described in the docstring. (__add__)
 
     def calculate_mass(self):
