@@ -149,12 +149,17 @@ class Ribosome(BioMoleculeCount):
     def __init__(self, mid, name, count=0):
         super(Ribosome, self).__init__(mid, name, count)
 
+    # TODO: implement a pool of free ribosomes
+
+
 
 class Polymerase(BioMoleculeCount):
     """
     A polymerase that can elongate nucleotide molecules. This could be used to derive special
     RNA and DNA polymerases.
     """
+
+    # TODO: implement Polymerase
     pass
 
 
@@ -162,4 +167,5 @@ class RNAPolymeraseII(Polymerase):
     """
     A polymerase that generates mRNAs from DNA sequences.
     """
+    # TODO: implement RNAPolymeraseII
     pass
