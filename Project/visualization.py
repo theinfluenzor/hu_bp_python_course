@@ -1,30 +1,21 @@
-import matplotlib as mpl
-import numpy as np
-import pandas as pd 
-import processes
-import random as rd
-
-time = np.arange(0,1001,1.)
-dna_nucleotides = 'ATGC'
-mrna_nucleotides =  'AUGC'
-aa = processes.Translation.code.values()
-while '*' in aa: aa.remove('*')
-
-dna_seq = []
-mrna_seq = []
-protein_seq = []
+import matplotlib as plt
+import test_create
+import pandas as pd
 
 
-for point in time:
-    dna_seq.append(rd.choice(dna_nucleotides))
-    mrna_seq.append(rd.choice(mrna_nucleotides))
-    protein_seq.append(rd.choice(aa))
+def dict_to_dframe(res_dict):
+    """ Takes result dict and return a DataFrame with timecourses for each model species. """
+    s = pd.DataFrame()
+    key_list = []
 
-dna_seq = ''.join(dna_seq)
-mrna_seq = ''.join(mrna_seq)
-protein_seq = ''.join(protein_seq)
+    for i, key in enumerate(res_dict):
+        s[i] = pd.DataFrame(res_dict[key]['time_course'], columns = [key])
+        key_list.append(key)
 
-dna_test = {'sequence': dna_seq
-}
-mrna_test = {'sequence': mrna_seq}
-protein_test = {'sequence' : protein_seq} 
+    s.columns = key_list
+    return s
+
+r = dict_to_dframe(test_create.result)
+
+#figure
+#plt.plot(r)
