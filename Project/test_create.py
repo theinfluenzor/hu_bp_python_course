@@ -3,7 +3,9 @@ import numpy as np
 import pandas as pd 
 import processes
 import random as rd
+import time
 
+np.random.seed(int(time.time()))
 time = np.arange(0,1001,1.)
 dna_length = 1000
 dna_nucleotides = 'ATGC'
