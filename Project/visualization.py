@@ -20,7 +20,7 @@ def timecourse_by_column(res_dict, keywords):
     """ Takes result dictionary and list of keywords(strings), which define the model species which should be plottet.
         e.g.: keywords = ['MRNA', 'Protein'], stores timecourses of all mRNAs and all Proteins in a DataFrame, which is returned.
     """
-    r = dict_to_dframe(rest_dict)
+    r = dict_to_dframe(res_dict)
     wished_cols = []
     for kw in keywords:
         wished_cols += [x for x in r.columns if kw in x]
@@ -41,8 +41,19 @@ def seq_dependence(res_dict, keyword):
             continue
     return seq_lengths, last_conc
     
+def mighty_plot(res_dict, plotword, keywords):
+    if plotword == 'timecourse':
+        p = timecourse_by_column(res_dict, keywords) #p is DataFrame
+        plt.plot(p)
+        plt.show()
+    elif plotword == 'sequence_dependency':
+        if len(keywords) > 1:
+            print 'If you want to plot sequence length dependent concentrations, keywords has to have only one element.'
+        else:
+            x,y = seq_dependence(res_dict, str(keywords))
+            plt.plot(x,y)
+            plt.show()
 
 
-x,y = seq_dependence(test_create.result, 'mrna')
-plt.plot(x,y)
-plt.show()
+
+
