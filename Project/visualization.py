@@ -87,7 +87,11 @@ def mighty_plot(res_dict, plotword, keywords):
     """ Plots as desired. """
     if plotword == 'time_course':
         p = timecourse_by_column(res_dict, keywords) #p is DataFrame
-        plt.plot(p)
+        #plt.plot(p, label = p.columns.values)
+        #plt.legend()
+        #plt.figure()
+        p.plot()
+        plt.legend(loc='best', fontsize = 7, ncol = 3)
         plt.show()
     elif plotword == 'sequence_dependency':
         if len(keywords) > 1:
@@ -108,11 +112,11 @@ def mighty_plot(res_dict, plotword, keywords):
         a, b = mean_timecourse(res_dict,keywords) #be careful with keywords
         a.plot(subplots=False, yerr=b, cmap = 'coolwarm') 
         plt.show()
-      
-    #elif plotword == 'mass_distribution':
-     #   mass_dict = mean_species_mass(res_dict,keywords)
+#    elif plotword == 'mass_distribution':
+ #       mass_dict = mean_species_mass(res_dict,keywords)
 
 
-s = mean_species_mass(test_model.test_dict, ['MRNA', 'Protein'])
-#mighty_plot(output, 'species_mean', ['Ribosomes', 'Protein'])
+
+#s = mean_species_mass(test_model.test_dict, ['MRNA', 'Protein'])
+mighty_plot(output, 'time_course', ['Protein_1'])
 
