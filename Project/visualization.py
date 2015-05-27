@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 #import seaborn as sb
 import test_create
 import pandas as pd
+import test_model
+import numpy as np
 
 
 def dict_to_dframe(res_dict):
@@ -42,7 +44,8 @@ def seq_dependence(res_dict, keyword):
     return seq_lengths, last_conc
     
 def mighty_plot(res_dict, plotword, keywords):
-    if plotword == 'timecourse':
+    """ Plots as desired. """
+    if plotword == 'time_course':
         p = timecourse_by_column(res_dict, keywords) #p is DataFrame
         plt.plot(p)
         plt.show()
@@ -53,7 +56,15 @@ def mighty_plot(res_dict, plotword, keywords):
             x,y = seq_dependence(res_dict, str(keywords))
             plt.plot(x,y)
             plt.show()
+    elif plotword == 'correlation':
+        c_df = timecourse_by_column(res_dict,keywords)
+        c = c_df.corr()
+        plt.pcolor(c, cmap = 'Blues')
+        plt.yticks(np.arange(0.5,len(c.index),1), c.index)
+        plt.xticks(np.arange(0.5,len(c.columns),1), c.columns, rotation = 'vertical')
+        plt.colorbar()
+        plt.show()
 
 
-
+mighty_plot(test_model.test_dict, 'correlation', [''])
 
