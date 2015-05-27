@@ -2,7 +2,7 @@ import matplotlib as mpl
 import matplotlib.pylab as plt
 from pylab import *
 
-A0 = 3.0; B0 = 2.0; C0 = 2.5; D0 = 1.0; E0 = 1.5;  k1 = 0.2; k2 = 0.1; k3 = 0.3; k4 = 0.2; k5 = 0.12; k6 = 0.2; k7 = 0.1; dt = 0.1; count = 0; rounds = 1001
+A0 = 3.0; B0 = 2.0; C0 = 2.5; D0 = 1.0; E0 = 1.5;  k1 = 0.2; k2 = 0.1; k3 = 0.3; k4 = 0.2; k5 = 0.12; k6 = 0.2; k7 = 0.1; dt = 1; count = 0; rounds = 1001
 k8 = 0.3
 resultsA = []
 resultsB = []
@@ -25,7 +25,7 @@ def my_solver(A,B,C,D,E, dt):
     dE = (D*E*k7 - E*k8)*dt
     return dA, dB, dC, dD, dE
 
-my_solver(A0,B0,C0,D0,E0,0.1)[0]
+my_solver(A0,B0,C0,D0,E0,dt)[0]
 for count in xrange(rounds):
     resultsA.append(A)
     resultsB.append(B)
@@ -40,11 +40,11 @@ for count in xrange(rounds):
     E = E + my_solver(A,B,C,D,E,dt)[4]
     count += 1
 
-test_dict = {'dna':{'time_course':resultsA, 'sequence':'ATATATAATTATA', 'mass':12.},
-             'mrna_1':{'time_course':resultsB, 'sequence':'AUAUGCGUU', 'mass':13.},
-             'mrna_2':{'time_course':resultsC, 'sequence':'AGAUGCG', 'mass':14.},
-             'protein_1':{'time_course':resultsD, 'sequence':'WXY', 'mass':133.},
-             'protein_2':{'time_course':resultsE, 'sequence':'WXYWX', 'mass':144.}}
+test_dict = {'DNA':{'timecourse':resultsA, 'sequence':'ATATATAATTATA', 'mass':12.},
+             'MRNA_1':{'timecourse':resultsB, 'sequence':'AUAUGCGUU', 'mass':13.},
+             'MRNA_2':{'timecourse':resultsC, 'sequence':'AGAUGCG', 'mass':14.},
+             'Protein_1':{'timecourse':resultsD, 'sequence':'WXY', 'mass':133.},
+             'Protein_2':{'timecourse':resultsE, 'sequence':'WXYWX', 'mass':144.}}
 
 
 #for key in test_dict.keys():
