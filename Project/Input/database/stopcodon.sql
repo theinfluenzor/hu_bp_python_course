@@ -1843,9 +1843,9 @@ CREATE TABLE stopcodon (
 INSERT INTO "stopcodon" VALUES(0,'UAG','TAG');
 INSERT INTO "stopcodon" VALUES(1,'UGA','TGA');
 INSERT INTO "stopcodon" VALUES(2,'UAA','TAA');
+CREATE INDEX ix_metabolites_ID ON metabolites ([ID]);
+CREATE INDEX ix_genes_index ON genes ([index]);
 CREATE INDEX ix_conc_index ON conc ([index]);
 CREATE INDEX ix_protein_hl_ID ON protein_hl ([ID]);
 CREATE INDEX ix_stopcodon_index ON stopcodon ([index]);
-CREATE INDEX ix_metabolites_ID ON metabolites ([ID]);
-CREATE INDEX ix_genes_index ON genes ([index]);
 COMMIT;
