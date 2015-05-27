@@ -3,7 +3,7 @@ import pandas as pd
 import sqlite3 as lite
 import cPickle as pickle
 
-####INput aus Excel-Tabellen
+####Input aus Excel-Tabellen
 #Einlesen der Gen-, Metabolit- und Mediumsspezifikation
 genes = pd.read_csv('genes.csv',header=4, index_col=None)
 metabolites =pd.read_csv('metabolite.csv',header=4, index_col=0, na_values=['NaN'], keep_default_na=False)
@@ -14,7 +14,7 @@ protein_hl = pd.read_csv('mRNA.csv',header=4, index_col=0, na_values=[' '],keep_
 #Editieren der Dataframes
 #Herauswerfen aller unwichtigen Spalten
 metabolites = metabolites['Name']
-genes = genes[['BioCyc','SwissProt','GenBank','Name','Sequence','Coordinate']]
+genes = genes[['BioCyc','SwissProt','GenBank','Sequence','Coordinate']]
 media = media['Concentration mM']
 protein_hl = protein_hl[['Symbol', 'Protein Halflife']]
 
@@ -32,13 +32,9 @@ f.close()
 genome = [line[:-1] for line in genome if line[0] != '>']
 genome = ''.join(genome)
 
+#Ueberscrheiben der csv files
 
-#ueberscrheiben der csv files
 
-
-#TODO
-#import in sql
-#schnittstelle zu anderen modulen
 
 #name=genes/metabolites/media
 def writeData(data,name):
@@ -46,18 +42,60 @@ def writeData(data,name):
 	with f:
 		f.write(data)
 
-
-con = lite.connect(':memory:')
+#Schreiben in die Datenbank
+con = lite.connect('./database/knowledgebase.db')
 con.text_factory = str
+
+
+
+#Writing sql-files for the database
+#helplist
+helplist1 = ['genes', 'protein_hl','metabolites','conc']
+helplist2 = [genes, protein_hl, metabolites, conc]
+helper = dict((helplist1[t], helplist2[t]) for t in xrange(len(helplist1)))
+for j in helper.keys():
+	with con:
+		cur = con.cursor()
+		cur.execute("DROP TABLE IF EXISTS "+j )
+		wert=helper[j].to_sql(j,con)
+		data = '\n'.join(con.iterdump())
+		writeData(data, "./database/"+j)
 
 with con:
 	cur = con.cursor()
-	cur.execute("DROP TABLE IF EXISTS Genes")
-	cur.execute("CREATE TABLE Genes(BioCyc , SwissProt , GenBank, Name, Sequence, Coordinate);")
-	for i in xrange(len(genes)):
-		#string='MG_'+str(i)
-		#cur.execute("INSERT INTO Genes (CMR )VALUES(?);", string) 
-		cur.execute("INSERT INTO Genes (BioCyc, SwissProt , GenBank, Name, Sequence, Coordinate) VALUES(?,?, ?, ?, ?, ?);", genes.iloc[i,0:6]) 
+	cur.execute("DROP TABLE IF EXISTS genome" )
+	cur.execute("CREATE TABLE genome(Sequence TEXT)")
+	cur.execute("INSERT INTO genome VALUES('"+genome+"')")
 	data = '\n'.join(con.iterdump())
+	writeData(data, "./database/genome.sql")
 
-	writeData(data, 'genes')
+
+
+
+#Reading from db
+helplist = ['genes', 'protein_hl','metabolites','conc', 'genome']
+con = lite.connect('./database/knowledgebase.db')
+with con:
+	for j in helplist:
+		cur = con.cursor()    
+		cur.execute('SELECT * FROM '+j)
+		data = cur.fetchall()
+		indexhelp = [data[i][0] for i in xrange(len(data))]
+		if j=='genes':
+			dframe = pd.DataFrame(data, index=indexhelp, columns=['dump','BioCyc', 'SwissProt','GenBank','Sequence', 'Coordinate'])
+			dframe = dframe.drop('dump',axis=1)
+		if j=='protein_hl':
+			indexhelp = [data[i][0] for i in xrange(len(data))]
+			dframe = pd.DataFrame(data,index = indexhelp, columns=['dump','Name','Halflife min'], dtype=float)
+			dframe = dframe.drop('dump',axis=1)
+		if j=='metabolites':
+			indexhelp = [data[i][0] for i in xrange(len(data))]
+			dframe = pd.DataFrame(data, index=indexhelp, columns=['dump','Name'])
+			dframe = dframe.drop('dump',axis=1)
+		if j=='conc':
+			dframe = pd.DataFrame(data, index=indexhelp, columns=['dump','Name', 'Concentration mM'], dtype=float)
+			dframe = dframe.drop('dump',axis=1)
+		if j=='genome':
+			pass#print data
+#dframe = pd.DataFrame(data, index=indexhelp, columns=['dump','Name', 'Concentration mM'], dtype=float)
+#dframe = dframe.drop('dump',axis=1)
