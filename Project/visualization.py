@@ -1,10 +1,39 @@
 import matplotlib.pyplot as plt
-#import seaborn as sb
+from matplotlib import colors
 import test_create
 import pandas as pd
 import test_model
 import numpy as np
 import pickle as p
+
+"""      
+        ***Module Description***
+
+        Call the mighty_plot function. It has to get a dictionary with the model results (at the moment called 'output').
+        Further the plot-function needs a 'plotword', which has to be a string, and a list of strings (list is called 'keywords').
+        You can use the following plotwords: time_course, sequence_dependency, correlation, species_mean or mass_distribution.
+        'keywords' has to be a list of strings! The strings inside 'keywords' define which species are plotted.
+        'keywords': You can put each model species name (like MRNA_11) as a string in 'keywords'.
+                    If you want to plot a group of species, like all mRNA you can just put 'MRNA' in 'keywords'.
+                    With 'keywords' = [''] you call all model species.
+        
+        time_course: If you choose time_course as your 'plotword' the visualization module plots a timecourse for each string in 'keywords'.
+                     If 'Protein' is a string in 'keywords' you plot timecourses (number of proteins over time) for all Proteins.
+                     To obtain timecourses for all model species it is sufficient to call the function with 'keywords' = ['']. 
+
+        sequence_dependency: Plots the concentrations of model species at the latest timepoint over its sequence length.
+                             Here you have to be a little bit careful. 'keywords' has to be a list with a single string inside. 
+                             Otherwise it would not work. (Right : 'keywords' = ['MRNA'], Wrong: 'keywords' = ['MRNA', 'Protein'])
+
+        correlation: Gives a correlation heatmap between all species defined by 'keywords'.
+
+        species_mean: For each string in 'keywords' one gets a mean timecourse with standard deviation. 
+                      A senseful keyword (a string in 'keywords') would be 'Protein', which gives the mean number of proteins at each timepoint.
+                      It doesn't make sense to use 'Protein_11' as a keyword, because one would get the mean and standard deviation of one species.
+
+        mass_distribution: Gives mass distribution (for species in 'keywords') at last timepoint of simulation as pie-chart. 
+
+"""
 
 output = {}
 with open('output.p', 'rb') as f:
@@ -55,7 +84,6 @@ def mean_timecourse(res_dict, keywords):
     all_mean_time_courses = {}
     all_std_time_courses = {}
     for kw in keywords:
-        print kw
         all_mean_time_courses[kw] = timecourse_by_column(res_dict, [kw]).mean(axis = 1)
         all_std_time_courses[kw] = timecourse_by_column(res_dict, [kw]).std(axis = 1)
     all_mean_df = pd.DataFrame(all_mean_time_courses)
@@ -64,59 +92,76 @@ def mean_timecourse(res_dict, keywords):
     #return all_mean_time_courses
     
 def mean_species_mass(res_dict, keywords):
-    mean_mass_dict = {}
+    """ Takes model dictionary and 'keywords', returns mean mass of each string in 'keywords' as dict."""
+    mass_dict = {}
     kw_count = {}
+    mean_mass_dict = {}
     for kw in keywords:
-        print kw
-        mean_mass_dict[kw] = 0
+        mass_dict[kw] = 0
         kw_count[kw] = 0
         for key in res_dict.keys():
             if kw in key:
-                print key
-                mean_mass_dict[kw] += res_dict[key]['mass']
+                mass_dict[kw] += res_dict[key]['mass']
                 kw_count[kw] += 1
     
-    for key in mean_mass_dict.keys():
-        mean_mass_dict[key] = mean_mass_dict[key]/kw_count[key]
-
-    return mean_mass_dict
+    #for key in mass_dict.keys():
+    #    mean_mass_dict[key] = 0 
+    #    mean_mass_dict[key] = mean_mass_dict[key]/kw_count[key]
+    
+    return mass_dict
 
 
 
 def mighty_plot(res_dict, plotword, keywords):
-    """ Plots as desired. """
+    """ Plots dependent on plotword and keywords. See module description. """
+
+
+
+      
     if plotword == 'time_course':
         p = timecourse_by_column(res_dict, keywords) #p is DataFrame
-        #plt.plot(p, label = p.columns.values)
-        #plt.legend()
-        #plt.figure()
-        p.plot()
-        plt.legend(loc='best', fontsize = 7, ncol = 3)
+        p.plot(linewidth = 1.5)
+        plt.legend(loc='best',bbox_to_anchor=(1, 1), fontsize = 7, ncol = 3)
+        plt.xlabel('time[s]')
+        plt.ylabel('number of molecules')
+        plt.title('Timecourses')
         plt.show()
     elif plotword == 'sequence_dependency':
         if len(keywords) > 1:
-            print 'If you want to plot sequence length dependent concentrations, keywords has to have only one element.'
+            print "If you want to plot sequence length dependent concentrations, 'keywords' has to have only one string."
         else:
-            x,y = seq_dependence(res_dict, str(keywords))
-            plt.plot(x,y)
+            x,y = seq_dependence(res_dict, keywords[0])
+            plt.scatter(x,y)
+            plt.xlabel('Sequence length[nt;aa]')
+            plt.ylabel('Number of molecules at last timepoint')
+            plt.title('Sequence dependency')
             plt.show()
     elif plotword == 'correlation':
         c_df = timecourse_by_column(res_dict,keywords)
         c = c_df.corr()
         plt.pcolor(c, cmap = 'Blues')
-        plt.yticks(np.arange(0.5,len(c.index),1), c.index)
-        plt.xticks(np.arange(0.5,len(c.columns),1), c.columns, rotation = 'vertical')
+        plt.yticks(np.arange(0.5,len(c.index),1), c.index, fontsize = 7)
+        plt.xticks(np.arange(0.5,len(c.columns),1), c.columns, rotation = 'vertical', fontsize = 7)
+        plt.title('Correlation heatmap')
         plt.colorbar()
         plt.show()
     elif plotword == 'species_mean':
         a, b = mean_timecourse(res_dict,keywords) #be careful with keywords
-        a.plot(subplots=False, yerr=b, cmap = 'coolwarm') 
+        a.plot(subplots=False, yerr=b, cmap = 'brg') 
+        plt.xlabel('time[s]')
+        plt.ylabel('number of molecules')
+        plt.title('Means of Moleculeclass')
         plt.show()
-#    elif plotword == 'mass_distribution':
- #       mass_dict = mean_species_mass(res_dict,keywords)
+    elif plotword == 'mass_distribution':
+        mass_dict = mean_species_mass(res_dict,keywords)
+        fig = plt.figure(1, figsize = [8,8])
+        colors = ['gold', 'yellowgreen', 'lightskyblue', 'lightcoral', 'seagreen', 'lightblue', 'violet', 'dodgerblue', 'salmon', 'sandybrown', 'magenta', 'crimson']
+        plt.pie(mass_dict.values(), labels =mass_dict.keys(), shadow=True, colors = colors)
+        plt.title('Mass distribution')
+        plt.show()
 
 
 
-#s = mean_species_mass(test_model.test_dict, ['MRNA', 'Protein'])
-mighty_plot(output, 'time_course', ['Protein_1'])
+
+#mighty_plot(output, 'mass_distribution', ['Protein','MRNA', 'DNA'])
 

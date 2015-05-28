@@ -42,7 +42,7 @@ protein_test = {'sequence'   : protein_seq,
                 'time_course': protein_count,
                 'mass'       :1000} 
 
-result = {'dna'    :dna_test,
-          'mrna'   :mrna_test,
-          'protein':protein_test}
+result = {'DNA'    :dna_test,
+          'MRNA'   :mrna_test,
+          'Protein':protein_test}
 
