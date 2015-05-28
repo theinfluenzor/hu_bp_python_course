@@ -40,11 +40,11 @@ for count in xrange(rounds):
     E = E + my_solver(A,B,C,D,E,dt)[4]
     count += 1
 
-test_dict = {'DNA':{'timecourse':resultsA, 'sequence':'ATATATAATTATA', 'mass':2500.},
-             'MRNA_1':{'timecourse':resultsB, 'sequence':'AUAUGCGUU', 'mass':13.},
-             'Protein_3':{'timecourse':resultsC, 'sequence':'AGAUGCG', 'mass':14.},
-             'Protein_1':{'timecourse':resultsD, 'sequence':'WXY', 'mass':133.},
-             'Protein_2':{'timecourse':resultsE, 'sequence':'WXYWX', 'mass':144.}}
+test_dict = {'DNA':{'timecourse':resultsA, 'sequence':'ATATATAATTATA', 'mass':1.},
+             'MRNA_1':{'timecourse':resultsB, 'sequence':'AUAUGCGUU', 'mass':5.},
+             'MRNA_2':{'timecourse':resultsC, 'sequence':'AGAUGCG', 'mass':6.},
+             'Protein_1':{'timecourse':resultsD, 'sequence':'WXY', 'mass':35.},
+             'Protein_2':{'timecourse':resultsE, 'sequence':'WXYWX', 'mass':42.}}
 
 
 #for key in test_dict.keys():

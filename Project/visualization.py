@@ -2,13 +2,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import pickle as p
+import test_model
 
 """      
         ***Module Description***
 
         Call the mighty_plot function. It has to get a dictionary with the model results (at the moment called 'output').
         Further the plot-function needs a 'plotword', which has to be a string, and a list of strings (list is called 'keywords').
-        You can use the following plotwords: time_course, sequence_dependency, correlation, species_mean or mass_distribution.
+        You can use the following plotwords: time_course, sequence_dependence, correlation, species_mean or mass_distribution.
         'keywords' has to be a list of strings! The strings inside 'keywords' define which species are plotted.
         'keywords': You can put each model species name (like MRNA_11) as a string in 'keywords'.
                     If you want to plot a group of species, like all mRNA you can just put 'MRNA' in 'keywords'.
@@ -18,7 +19,7 @@ import pickle as p
                      If 'Protein' is a string in 'keywords' you plot timecourses (number of proteins over time) for all Proteins.
                      To obtain timecourses for all model species it is sufficient to call the function with 'keywords' = ['']. 
 
-        sequence_dependency: Plots the concentrations of model species at the latest timepoint over its sequence length.
+        sequence_dependence: Plots the concentrations of model species at the latest timepoint over its sequence length.
                              Here you have to be a little bit careful. 'keywords' has to be a list with a single string inside. 
                              Otherwise it would not work. (Right : 'keywords' = ['MRNA'], Wrong: 'keywords' = ['MRNA', 'Protein'])
 
@@ -120,7 +121,7 @@ def mighty_plot(res_dict, plotword, keywords):
         plt.ylabel('number of molecules')
         plt.title('Timecourses')
         plt.show()
-    elif plotword == 'sequence_dependency':
+    elif plotword == 'sequence_dependence':
         if len(keywords) > 1:
             print "If you want to plot sequence length dependent concentrations, 'keywords' has to have only one string."
         else:
@@ -128,7 +129,7 @@ def mighty_plot(res_dict, plotword, keywords):
             plt.scatter(x,y)
             plt.xlabel('Sequence length[nt;aa]')
             plt.ylabel('Number of molecules at last timepoint')
-            plt.title('Sequence dependency')
+            plt.title('Sequence dependence')
             plt.show()
     elif plotword == 'correlation':
         c_df = timecourse_by_column(res_dict,keywords)
@@ -149,7 +150,7 @@ def mighty_plot(res_dict, plotword, keywords):
     elif plotword == 'mass_distribution':
         mass_dict = mean_species_mass(res_dict,keywords)
         fig = plt.figure(1, figsize = [8,8])
-        colors = ['gold', 'yellowgreen', 'lightskyblue', 'lightcoral', 'seagreen', 'lightblue', 'violet', 'dodgerblue', 'salmon', 'sandybrown', 'magenta', 'crimson']
+        colors = ['sandybrown', 'yellowgreen', 'lightskyblue', 'lightcoral', 'seagreen', 'lightblue', 'violet', 'dodgerblue', 'salmon', 'magenta', 'crimson']
         plt.pie(mass_dict.values(), labels =mass_dict.keys(), shadow=True, colors = colors)
         plt.title('Mass distribution')
         plt.show()
