@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
-from matplotlib import colors
-import test_create
 import pandas as pd
-import test_model
 import numpy as np
 import pickle as p
 
