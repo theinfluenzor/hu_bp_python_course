@@ -111,10 +111,7 @@ def mean_species_mass(res_dict, keywords):
 
 def mighty_plot(res_dict, plotword, keywords):
     """ Plots dependent on plotword and keywords. See module description. """
-
-
-
-      
+     
     if plotword == 'time_course':
         p = timecourse_by_column(res_dict, keywords) #p is DataFrame
         p.plot(linewidth = 1.5)
